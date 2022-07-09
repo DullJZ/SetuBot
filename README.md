@@ -12,7 +12,7 @@
 ```
 123456:abcdefgh
 ```
-3. 安装pyTelegramBotAPI库
+3. 安装pyTelegramBotAPI和requests库
 4. 运行main.py
 
 ## 鸣谢
