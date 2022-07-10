@@ -12,11 +12,14 @@
 ```
 123456:abcdefgh
 ```
-3. 安装pyTelegramBotAPI和requests库
+3. 安装pyTelegramBotAPI和cloudscraper库
 4. 运行main.py
 
+## 问题
+已知在非中文操作系统上运行会出现Unicode Decode错误，疑为PyTelgramBotAPI的问题，不准备修了。
 ## 鸣谢
 1. [Telegram](https://telegram.org/)
 2. [PyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI)
-3. [pycharm](https://www.jetbrains.com/pycharm/)
-4. [色图api](https://github.com/yuban10703/SetuAPI)
+3. [cloudscraper](https://github.com/VeNoMouS/cloudscraper)
+4. [pycharm](https://www.jetbrains.com/pycharm/)
+5. [色图api](https://github.com/yuban10703/SetuAPI)
