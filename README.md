@@ -13,7 +13,7 @@
 123456:abcdefgh
 ```
 3. 安装pyTelegramBotAPI和cloudscraper库
-4. 运行main.py
+4. 运行start.py
 
 ## 问题
 已知在非中文操作系统上运行会出现Unicode Decode错误，疑为PyTelgramBotAPI的问题，不准备修了。
