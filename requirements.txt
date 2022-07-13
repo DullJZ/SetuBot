@@ -1,2 +1,3 @@
 pyTelegramBotAPI
 cloudscraper~=1.2.60
+PixivPy3~=3.7.1
