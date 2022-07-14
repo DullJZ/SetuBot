@@ -1,5 +1,6 @@
 from pixivpy3 import *
 import os
+import html2text
 import requests
 import json
 from pprint import *
@@ -23,12 +24,6 @@ def pixiv_login():
     return api
 
 
-def get_illust(api, illust_id):
-    illust = api.illust_detail(illust_id)
-    print("\n获取到：", illust)
-    return illust
-
-
 def get_ranking(api, mode='day'):
     """
     获取排行榜
@@ -46,9 +41,9 @@ def deal_ranking(ranking, now_item=0):
     ranking: 排行榜json数据
     now_item: 当前项目
     """
-    item = ranking.get('illusts')[now_item]
-    print(item.get('id'), item.get('title'), item.get('image_urls').get('large'))
-    return item.get('image_urls').get('large')
+    item = ranking['illusts'][now_item]
+    print(item['id'], item['title'], item['image_urls']['large'])
+    return item['image_urls']['large']
 
 
 def download_illust(url):
@@ -63,12 +58,37 @@ def download_illust(url):
 
 def get_pixiv_detail(api, illust_id):
     """
-    获取pixiv详情
-    返回pixiv详情json数据
+    通过插画id获取详情
+    返回详情json数据
     """
     pixiv_detail = api.illust_detail(illust_id)
     return pixiv_detail
 
-#a=(get_ranking(pixiv_login()))
-#pass
-#download_illust('https://i.pximg.net/c/600x1200_90/img-master/img/2022/07/10/15/15/47/99628080_p0_master1200.jpg')
+
+def handle_pixiv_detail(detail):
+    """
+    处理插画详情
+    传入详情json数据
+    返回一个元组 (p:消息内容, caption ,caption_not_empty:是否有描述, image_urls:包含图片url的一个列表)
+    """
+    # 获取各种信息
+    caption = None
+    caption_not_empty = False
+    if detail['illust']['caption'] != "":  # 检查插画有caption
+        caption = detail['illust']['caption']  # 插画caption，HTML格式
+        caption = html2text.html2text(caption)  # 转换为Markdown格式
+        caption_not_empty = True
+
+    title = detail['illust']['title']
+    creat_date = detail['illust']['create_date']  # 插画创建时间
+    meta_pages = detail['illust']['meta_pages']  # 插画的所有页面，一个列表
+
+    # 消息内容
+    p = "标题：" + title + "\n" + "创建时间：" + creat_date + "\n" + "页数：" + str(
+        len(meta_pages)) + "（若页数为零则插画为单页）"
+
+    # l为返回的包含图片url的一个列表
+    image_urls = [detail['illust']['image_urls']['large']]
+    for i in range(0, len(meta_pages)):
+        image_urls.append(meta_pages[i]['image_urls']['original'])
+    return p, caption, caption_not_empty, image_urls
