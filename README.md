@@ -7,8 +7,7 @@
 2. 输入/start 开始使用
 3. 输入/setu 在数据库中所有色图中随机发送一张色图
 4. 输入/setu r18 在数据库中所有色图中随机发送一张18禁色图
-5. 输入/pixiv num=? 获取pixiv排行榜前num名的作品，num不写则为10
-6. TODO：获取r18排行榜
+5. 输入/pixiv_ranking num=? (r18)获取pixiv排行榜前num名的作品，num不写则为10，含r18则获取r18排行榜
 ## 自建机器人
 1. 克隆代码
 2. 创建token.txt文件，内容为你的机器人token，格式为：
@@ -31,5 +30,8 @@
 7. [pixivpy](https://github.com/upbit/pixivpy)
 ## 打赏
 本项目完全免费且公开提供，如果你喜欢这个项目，请赏作者一杯咖啡！
-![支付宝红包码](./hongbaoma.jpg)
-![支付宝](./zfb.jpg)
+
+
+<center class="half">
+    <img src="./hongbaoma.jpg" alt="支付宝红包码" style="zoom: 25%;" /><img src="./zfb.jpg" alt="支付宝" style="zoom:25%;" />
+</center>

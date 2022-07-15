@@ -24,17 +24,6 @@ def pixiv_login():
     return api
 
 
-def get_ranking(api, mode='day'):
-    """
-    获取排行榜
-    返回排行榜json数据
-    mode: [day, week, month, day_male, day_female, week_original, week_rookie, day_r18, day_male_r18, day_female_r18, week_r18, week_r18g]
-    """
-    mode = "day"
-    ranking = api.illust_ranking(mode=mode)
-    return ranking
-
-
 def deal_ranking(ranking, now_item=0):
     """
     处理排行榜

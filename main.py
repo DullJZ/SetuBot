@@ -70,29 +70,27 @@ def main():
     def send_pixiv_ranking(message):
         # 提取请求参数
         num = 10  # 默认10条
-        # r18 = False # 默认不发送r18
+        r18 = False  # 默认不发送r18
         if 'num=' in message.text:
             num = int(message.text.split('num=')[1])
-        # if 'r18' in message.text:
-        # r18 = True
+        if 'r18' in message.text:
+            r18 = True
 
         bot.reply_to(message, "正在获取pixiv...")
         print(time.time(), "，chat_id：", message.chat.id, "，开始获取pixiv...")
         try:
             api = pixiv.pixiv_login()
             bot.send_message(message.chat.id, "正在获取pixiv排行榜...")
-            # if r18:
-            # mode = "daily_r18"
-            # bot.send_message(message.chat.id, "你选择了r18模式！")
-            # else:
-            # mode = "day"
+            if r18:
+                mode = "day_r18"
+                bot.send_message(message.chat.id, "你选择了r18模式！")
+            else:
+                mode = "day"
             for now_item in range(0, num):
                 # item_cover_img 存储的是图片的url
                 # item_pixiv_id 存储的是插画的id
-
-                (item_cover_img, item_pixiv_id) = (
-                    pixiv.deal_ranking(pixiv.get_ranking(api, "day_r18"), now_item),
-                    pixiv.get_ranking(api)['illusts'][now_item]['id'])
+                item_cover_img = pixiv.deal_ranking(api.illust_ranking(mode), now_item)
+                item_pixiv_id = api.illust_ranking(mode)['illusts'][now_item]['id']
 
                 bot.send_message(message.chat.id, "正在发送pixiv排行榜第" + str(now_item + 1) + "张...")
                 button = telebot.types.InlineKeyboardButton(text="查看详情", callback_data="pixiv_" + str(item_pixiv_id))
