@@ -20,9 +20,31 @@ def main():
     print("\n=============Start============")
 
     @bot.message_handler(commands=['start'])
-    def send_welcome(message):
+    def start(message):
         bot.reply_to(message, "欢迎来到色图bot！")
         bot.send_message(message.chat.id, "请发送 /setu")
+
+    @bot.message_handler(commands=['fetch_tg_user_by_id'])
+    def fetch_tg_user_by_id(message):
+        user_id = message.text.split(" ")[1]
+        user = bot.get_chat(user_id)
+        if user.type == "private":
+            if user.username:
+                button = telebot.types.InlineKeyboardButton(text="查看用户详情", url='tg://user?id={0}'.format(user_id))
+                bot.send_message(message.chat.id, "@" + user.username,
+                                 reply_markup=telebot.types.InlineKeyboardMarkup(keyboard=[[button]]))
+            else:
+                bot.send_message(message.chat.id, "用户未设置用户名",
+                                 reply_markup=telebot.types.InlineKeyboardMarkup(keyboard=[[button]]))
+        elif user.type == "group":
+            if user.invite_link:
+                button = telebot.types.InlineKeyboardButton(text="查看群详情", url=user.invite_link)
+                bot.send_message(message.chat.id, "这是一个群组：" + user.title,
+                                 reply_markup=telebot.types.InlineKeyboardMarkup(keyboard=[[button]]))
+            else:
+                bot.send_message(message.chat.id, "群组未设置或无权限访问邀请链接，群组：" + user.title)
+        elif user.type == "supergroup":
+            bot.send_message(message.chat.id, "@" + user.username)
 
     @bot.message_handler(commands=['setu'])
     def send_setu(message):
@@ -44,8 +66,8 @@ def main():
             bot.reply_to(message, "获取失败，请稍后再试！")
             print(time.time(), "，chat_id：", message.chat.id, "，获取失败！")
 
-    @bot.message_handler(commands=['pixiv'])
-    def send_pixiv(message):
+    @bot.message_handler(commands=['pixiv_ranking'])
+    def send_pixiv_ranking(message):
         # 提取请求参数
         num = 10  # 默认10条
         # r18 = False # 默认不发送r18
