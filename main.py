@@ -108,18 +108,46 @@ def main():
 
         api = pixiv.pixiv_login()
         detail = pixiv.get_pixiv_detail(api, message.text.split(' ')[1])
-        p, caption, caption_not_empty, image_urls = pixiv.handle_pixiv_detail(detail)
+        p, caption, caption_not_empty, original_image_urls = pixiv.handle_pixiv_detail(detail)
         # 发送消息
         if caption_not_empty:
             bot.send_message(message.chat.id, caption, parse_mode="Markdown")
         bot.send_message(message.chat.id, p)
         j = 0  # 图片序号
-        for i in image_urls:
+        for i in original_image_urls:
             bot.send_document(message.chat.id, pixiv.download_illust(i),
                               visible_file_name=" 第" + str(j) + "页.png", disable_notification=True)
             j += 1
         bot.send_message(message.chat.id, "完成！")
         print(time.time(), "，chat_id：", message.chat.id, "，获取详情完成！")
+
+    @bot.message_handler(commands=['pixiv_search'])
+    def pixiv_search(message):
+        word = message.text.split(' ')[1]
+        num = 10  # 默认10条
+        if 'num=' in message.text:
+            num = int(message.text.split('num=')[1])
+        api = pixiv.pixiv_login()
+        search_data = api.search_illust(word)
+
+        index = 0
+        if num > 30:
+            num = 30
+            bot.send_message(message.chat.id, "搜索结果超过30条，只显示前30条！")
+
+        for id in pixiv.handle_search_illust(search_data):
+            # 检测是否超过num
+            index += 1
+            if index > num:
+                break
+
+            detail = pixiv.get_pixiv_detail(api, id)
+            # 封面图片
+            cover_img = detail['illust']['image_urls']['large']
+            # 发送消息
+            button = telebot.types.InlineKeyboardButton(text="查看详情", callback_data="pixiv_" + str(id))
+            bot.send_photo(message.chat.id, pixiv.download_illust(cover_img),
+                           reply_markup=telebot.types.InlineKeyboardMarkup(keyboard=[[button]]))
 
     @bot.callback_query_handler(func=lambda call: True)
     def handle_callback(call):
@@ -129,14 +157,14 @@ def main():
         # 提取插画id
         pixiv_id = call.data.split("_")[1]
         detail = pixiv.get_pixiv_detail(api, pixiv_id)
-        p, caption, caption_not_empty, image_urls = pixiv.handle_pixiv_detail(detail)
+        p, caption, caption_not_empty, original_image_urls = pixiv.handle_pixiv_detail(detail)
 
         # 发送消息
         if caption_not_empty:
             bot.send_message(call.message.chat.id, caption, parse_mode="Markdown")
         bot.send_message(call.message.chat.id, p)
         j = 0  # 图片序号
-        for i in image_urls:
+        for i in original_image_urls:
             bot.send_document(call.message.chat.id, pixiv.download_illust(i),
                               visible_file_name=" 第" + str(j) + "页.png", disable_notification=True)
             j += 1
