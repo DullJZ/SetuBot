@@ -31,8 +31,8 @@ def deal_ranking(ranking, now_item=0):
     now_item: 当前项目
     """
     item = ranking['illusts'][now_item]
-    print(item['id'], item['title'], item['image_urls']['large'])
-    return item['image_urls']['large']
+    print(item['id'], item['title'], item['original_image_urls']['large'])
+    return item['original_image_urls']['large']
 
 
 def download_illust(url):
@@ -58,9 +58,10 @@ def handle_pixiv_detail(detail):
     """
     处理插画详情
     传入详情json数据
-    返回一个元组 (p:消息内容, caption ,caption_not_empty:是否有描述, image_urls:包含图片url的一个列表)
+    返回一个元组 (p:消息内容, caption ,caption_not_empty:是否有描述, original_image_urls:包含图片url的一个列表)
     """
     # 获取各种信息
+    id = detail['illust']['id']
     caption = None
     caption_not_empty = False
     if detail['illust']['caption'] != "":  # 检查插画有caption
@@ -73,11 +74,26 @@ def handle_pixiv_detail(detail):
     meta_pages = detail['illust']['meta_pages']  # 插画的所有页面，一个列表
 
     # 消息内容
-    p = "标题：" + title + "\n" + "创建时间：" + creat_date + "\n" + "页数：" + str(
-        len(meta_pages)) + "（若页数为零则插画为单页）"
+    p = "插画ID：{0}\n标题：{1}\n创建时间：{2}\n页数：{3}".format(id, title, creat_date, str(
+        len(meta_pages)) + "（若页数为零则插画为单页）")
 
-    # l为返回的包含图片url的一个列表
-    image_urls = [detail['illust']['image_urls']['large']]
-    for i in range(0, len(meta_pages)):
-        image_urls.append(meta_pages[i]['image_urls']['original'])
-    return p, caption, caption_not_empty, image_urls
+    # original_image_urls为返回的包含源图片url的一个列表
+    original_image_urls = []
+    if not meta_pages:
+        original_image_urls = [detail['illust']['meta_single_page']['original_image_url']]
+    else:
+        for i in range(0, len(meta_pages)):
+            original_image_urls.append(meta_pages[i]['original_image_urls']['original'])
+    return p, caption, caption_not_empty, original_image_urls
+
+
+def handle_search_illust(search_data):
+    """
+    处理搜索结果
+    传入搜索结果json数据
+    返回一个列表IDs，包含插画id
+    """
+    IDs = []
+    for i in search_data['illusts']:
+        IDs.append(i['id'])
+    return IDs
