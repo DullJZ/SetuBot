@@ -40,7 +40,7 @@ def download_illust(url):
     下载图片
     返回图片内容bytes
     """
-    print("\n开始下载：", url)
+    print("开始下载：", url)
     img = requests.get(url, stream=True, headers={'Referer': 'https://app-api.pixiv.net/'})
     return img.content
 
@@ -80,10 +80,10 @@ def handle_pixiv_detail(detail):
     # original_image_urls为返回的包含源图片url的一个列表
     original_image_urls = []
     if not meta_pages:
-        original_image_urls = [detail['illust']['meta_single_page']['original_image_url']]
+        original_image_urls = [detail['illust']['meta_single_page']['image_url']]
     else:
         for i in range(0, len(meta_pages)):
-            original_image_urls.append(meta_pages[i]['original_image_urls']['original'])
+            original_image_urls.append(meta_pages[i]['image_urls']['original'])
     return p, caption, caption_not_empty, original_image_urls
 
 

@@ -29,8 +29,8 @@ def main():
         user_id = message.text.split(" ")[1]
         user = bot.get_chat(user_id)
         if user.type == "private":
+            button = telebot.types.InlineKeyboardButton(text="查看用户详情", url='tg://user?id={0}'.format(user_id))
             if user.username:
-                button = telebot.types.InlineKeyboardButton(text="查看用户详情", url='tg://user?id={0}'.format(user_id))
                 bot.send_message(message.chat.id, "@" + user.username,
                                  reply_markup=telebot.types.InlineKeyboardMarkup(keyboard=[[button]]))
             else:
