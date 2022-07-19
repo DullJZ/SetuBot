@@ -31,8 +31,8 @@ def deal_ranking(ranking, now_item=0):
     now_item: 当前项目
     """
     item = ranking['illusts'][now_item]
-    print(item['id'], item['title'], item['original_image_urls']['large'])
-    return item['original_image_urls']['large']
+    print(item['id'], item['title'], item['image_urls']['large'])
+    return item['image_urls']['large']
 
 
 def download_illust(url):
